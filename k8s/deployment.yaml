@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ape-orchestration-deployment
+  labels:
+    app: ape-orchestration-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ape-orchestration
+  template:
+    metadata:
+      labels:
+        app: ape-orchestration
+    spec:
+      containers:
+        - image: jansuklje/ape-orchestration-service:latest
+          name: ape-orchestration
+          env:
+            - name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret-url
+                  key: url
+            - name: KUMULUZEE_DATASOURCES0_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret-username
+                  key: username
+            - name: KUMULUZEE_DATASOURCES0_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret-password
+                  key: password
+          ports:
+            - containerPort: 8080

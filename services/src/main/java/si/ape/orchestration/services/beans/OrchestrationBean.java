@@ -1,7 +1,5 @@
 package si.ape.orchestration.services.beans;
 
-import si.ape.orchestration.lib.Customer;
-import si.ape.orchestration.lib.Employee;
 import si.ape.orchestration.lib.Job;
 import si.ape.orchestration.lib.Parcel;
 import si.ape.orchestration.lib.requests.authentication.LoginRequest;
@@ -91,34 +89,52 @@ public class OrchestrationBean {
 
     // Jobs microservice.
 
-    public List<Job> viewJobs() {
-        jobBean.viewJobs();
-        return null;
+    /**
+     * Delegates the view jobs request to the jobs bean and returns the list of jobs.
+     *
+     * @param employeeId The ID of the employee.
+     * @return The list of jobs.
+     */
+    public List<Job> viewJobs(Integer employeeId) {
+        return jobBean.viewJobs(employeeId);
     }
 
-    public List<Job> viewJobsWithStatus() {
-        jobBean.viewJobsWithStatus();
-        return null;
+    /**
+     * Delegates the view jobs with status request to the jobs bean and returns the list of jobs.
+     *
+     * @param employeeId  The ID of the employee.
+     * @param jobStatusId The ID of the job status.
+     * @return The list of jobs.
+     */
+    public List<Job> viewJobsWithStatus(Integer employeeId, Integer jobStatusId) {
+        return jobBean.viewJobsWithStatus(employeeId, jobStatusId);
     }
 
-    public Job viewJobsOfBranch() {
-        jobBean.viewJobsOfBranch();
-        return null;
+    /**
+     * Delegates the view job request to the jobs bean and returns the job.
+     *
+     * @return True if the job was created, false otherwise.
+     */
+    public boolean createJob() {
+        return jobBean.createJob();
     }
 
-    public Job createJob() {
-        jobBean.createJob();
-        return null;
+    /**
+     * Delegates the complete job request to the jobs bean and returns the success.
+     *
+     * @return True if the job was completed, false otherwise.
+     */
+    public boolean completeJob() {
+        return jobBean.completeJob();
     }
 
-    public Job completeJob() {
-        jobBean.completeJob();
-        return null;
-    }
-
-    public Job cancelJob() {
-        jobBean.cancelJob();
-        return null;
+    /**
+     * Delegates the cancel job request to the jobs bean and returns the success.
+     *
+     * @return True if the job was cancelled, false otherwise.
+     */
+    public boolean cancelJob() {
+        return jobBean.cancelJob();
     }
 
 

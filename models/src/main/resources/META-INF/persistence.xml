@@ -3,8 +3,39 @@
     <persistence-unit name="image-catalog-jpa" transaction-type="RESOURCE_LOCAL">
         <non-jta-data-source>jdbc/ImageMetadataDS</non-jta-data-source>
 
-        <class>si.fri.rso.samples.imagecatalog.models.entities.ImageMetadataEntity</class>
-        <class>si.fri.rso.samples.imagecatalog.models.converters.InstantAtributeConverter</class>
+        <class>si.ape.orchestration.models.entities.BranchEntity</class>
+        <class>si.ape.orchestration.models.entities.BranchTypeEntity</class>
+        <class>si.ape.orchestration.models.entities.CityEntity</class>
+        <class>si.ape.orchestration.models.entities.CountryEntity</class>
+        <class>si.ape.orchestration.models.entities.CustomerEntity</class>
+        <class>si.ape.orchestration.models.entities.EmployeeEntity</class>
+        <class>si.ape.orchestration.models.entities.JobEntity</class>
+        <class>si.ape.orchestration.models.entities.JobParcelEntity</class>
+        <class>si.ape.orchestration.models.entities.JobStatusEntity</class>
+        <class>si.ape.orchestration.models.entities.JobTypeEntity</class>
+        <class>si.ape.orchestration.models.entities.ParcelEntity</class>
+        <class>si.ape.orchestration.models.entities.ParcelStatusEntity</class>
+        <class>si.ape.orchestration.models.entities.RoleEntity</class>
+        <class>si.ape.orchestration.models.entities.StreetEntity</class>
+        <class>si.ape.orchestration.models.entities.UserEntity</class>
+
+        <class>si.ape.orchestration.models.converters.BranchConverter</class>
+        <class>si.ape.orchestration.models.converters.BranchTypeConverter</class>
+        <class>si.ape.orchestration.models.converters.CityConverter</class>
+        <class>si.ape.orchestration.models.converters.CountryConverter</class>
+        <class>si.ape.orchestration.models.converters.CustomerConverter</class>
+        <class>si.ape.orchestration.models.converters.EmployeeConverter</class>
+        <class>si.ape.orchestration.models.converters.InstantAtributeConverter</class>
+        <class>si.ape.orchestration.models.converters.JobConverter</class>
+        <class>si.ape.orchestration.models.converters.JobParcelConverter</class>
+        <class>si.ape.orchestration.models.converters.JobStatusConverter</class>
+        <class>si.ape.orchestration.models.converters.JobTypeConverter</class>
+        <class>si.ape.orchestration.models.converters.ParcelConverter</class>
+        <class>si.ape.orchestration.models.converters.ParcelStatusConverter</class>
+        <class>si.ape.orchestration.models.converters.RoleConverter</class>
+        <class>si.ape.orchestration.models.converters.StreetConverter</class>
+        <class>si.ape.orchestration.models.converters.UserConverter</class>
+
 
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>

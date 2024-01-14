@@ -16,9 +16,9 @@ import java.util.logging.Logger;
 @Path("/images")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class ImageMetadataResource {
+public class OrchestrationResource {
 
-    private final Logger log = Logger.getLogger(ImageMetadataResource.class.getName());
+    private final Logger log = Logger.getLogger(OrchestrationResource.class.getName());
 
     @Inject
     private OrchestrationBean orchestrationBean;

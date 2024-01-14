@@ -3,9 +3,11 @@ package si.ape.orchestration.services.beans;
 import si.ape.orchestration.lib.Customer;
 import si.ape.orchestration.lib.Employee;
 import si.ape.orchestration.lib.Job;
+import si.ape.orchestration.lib.Parcel;
 import si.ape.orchestration.lib.requests.authentication.LoginRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterCustomerRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterEmployeeRequest;
+import si.ape.orchestration.lib.requests.parcels.CreateParcelRequest;
 import si.ape.orchestration.lib.responses.messaging.BranchStatisticsResponse;
 import si.ape.orchestration.lib.responses.messaging.OrganizationStatisticsResponse;
 
@@ -144,12 +146,32 @@ public class OrchestrationBean {
 
     // Parcels microservice.
 
-    public void viewParcels() {
-        parcelsBean.viewParcels();
+    /**
+     * Delegates the view parcels request to the parcels bean and returns the list of parcels.
+     *
+     * @return The list of parcels.
+     */
+    public List<Parcel> viewParcels() {
+        return parcelsBean.viewParcels();
     }
 
-    public void createParcel() {
-        parcelsBean.createParcel();
+    /**
+     * Delegates the view parcel request to the parcels bean and returns the parcel.
+     *
+     * @param parcelId The ID of the parcel.
+     * @return The parcel.
+     */
+    public Parcel viewParcel(String parcelId) {
+        return parcelsBean.viewParcel(parcelId);
+    }
+
+    /**
+     * Delegates the create parcel request to the parcels bean.
+     *
+     * @param createParcelRequest The create parcel request object.
+     */
+    public void createParcel(CreateParcelRequest createParcelRequest) {
+        parcelsBean.createParcel(createParcelRequest);
     }
 
 

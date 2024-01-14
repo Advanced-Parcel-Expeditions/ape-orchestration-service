@@ -1,4 +1,4 @@
-package si.fri.rso.samples.imagecatalog.services.producers;
+package si.ape.orchestration.services.producers;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;

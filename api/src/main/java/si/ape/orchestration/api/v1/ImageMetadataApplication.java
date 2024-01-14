@@ -1,4 +1,4 @@
-package si.fri.rso.samples.imagecatalog.api.v1;
+package si.ape.orchestration.api.v1;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

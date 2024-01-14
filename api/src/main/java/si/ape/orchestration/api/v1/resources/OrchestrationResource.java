@@ -119,4 +119,52 @@ public class OrchestrationResource {
         }
     }
 
+    // Jobs.
+
+    // Statistics.
+
+    @Operation(description = "Get statistics for the whole organisation.", summary = "Get overall statistics")
+    @APIResponses({
+            @APIResponse(responseCode = "200",
+                    description = "Statistics for the entire organisation."
+            ),
+            @APIResponse(responseCode = "404", description = "Statistics could not be found.")
+    })
+    @GET
+    @Path("/statistics")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response viewStatistics() {
+        try {
+            return Response.ok(orchestrationBean.viewStatistics()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    @Operation(description = "Get statistics for a specific branch.", summary = "Get branch statistics")
+    @APIResponses({
+            @APIResponse(responseCode = "200",
+                    description = "Statistics for a specific branch."
+            ),
+            @APIResponse(responseCode = "404", description = "Statistics could not be found.")
+    })
+    @GET
+    @Path("/statistics/{branchId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response viewStatisticsOfBranch(@PathParam("branchId") Integer branchId) {
+        try {
+            return Response.ok(orchestrationBean.viewStatisticsOfBranch(branchId)).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    // Customers.
+
+    // Parcels.
+
+    // Messaging.
+
 }

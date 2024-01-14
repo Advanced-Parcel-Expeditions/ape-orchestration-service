@@ -6,6 +6,8 @@ import si.ape.orchestration.lib.Job;
 import si.ape.orchestration.lib.requests.authentication.LoginRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterCustomerRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterEmployeeRequest;
+import si.ape.orchestration.lib.responses.messaging.BranchStatisticsResponse;
+import si.ape.orchestration.lib.responses.messaging.OrganizationStatisticsResponse;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -120,12 +122,23 @@ public class OrchestrationBean {
 
     // Statistics.
 
-    public void viewStatistics() {
-        statisticsBean.viewStatistics();
+    /**
+     * Delegates the organization statistics request to the statistics bean and returns the organization statistics.
+     *
+     * @return The overall organization statistics.
+     */
+    public OrganizationStatisticsResponse viewStatistics() {
+        return statisticsBean.viewStatistics();
     }
 
-    public void viewStatisticsOfBranch() {
-        statisticsBean.viewStatisticsOfBranch();
+    /**
+     * Delegates the branch statistics request to the statistics bean and returns the branch statistics.
+     *
+     * @param branchId The ID of the branch.
+     * @return The branch statistics.
+     */
+    public BranchStatisticsResponse viewStatisticsOfBranch(Integer branchId) {
+        return statisticsBean.viewStatisticsOfBranch(branchId);
     }
 
 

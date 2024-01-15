@@ -12,9 +12,19 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+/**
+ * The StaffBean class is a class which takes care of communication with the staff microservice and provides
+ * the staff to the frontend application.
+ */
 @RequestScoped
 public class StaffBean {
 
+    /**
+     * Find a branch by its name.
+     *
+     * @param name The name of the branch.
+     * @return The branch with the specified name.
+     */
     public Branch findBranchByName(String name) {
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://localhost:8081/v1/staff/branches/name/" + name).request().get();
@@ -26,6 +36,12 @@ public class StaffBean {
         }
     }
 
+    /**
+     * Find all the employees of a branch.
+     *
+     * @param branchId The ID of the branch.
+     * @return All the employees of the branch.
+     */
     public List<Employee> findEmployeesOfBranch(Integer branchId) {
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://localhost:8082/v1/staff/staff?branchId=" + branchId).request().get();

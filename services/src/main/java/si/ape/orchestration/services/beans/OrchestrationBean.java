@@ -1,5 +1,7 @@
 package si.ape.orchestration.services.beans;
 
+import si.ape.orchestration.lib.Branch;
+import si.ape.orchestration.lib.Employee;
 import si.ape.orchestration.lib.Job;
 import si.ape.orchestration.lib.Parcel;
 import si.ape.orchestration.lib.requests.authentication.LoginRequest;
@@ -44,6 +46,10 @@ public class OrchestrationBean {
     /** The job bean, which is used to communicate with the jobs microservice. */
     @Inject
     private JobBean jobBean;
+
+    /** The staff bean, which is used to communicate with the staff microservice. */
+    @Inject
+    private StaffBean staffBean;
 
     /** The statistics bean, which is used to communicate with the statistics microservice. */
     @Inject
@@ -152,8 +158,29 @@ public class OrchestrationBean {
         return jobBean.cancelJob(jobId);
     }
 
+    // Staff microservice.
 
-    // Statistics.
+    /**
+     * Delegates the find branch by name request to the staff bean and returns the branch.
+     *
+     * @param name The name of the branch.
+     * @return The branch.
+     */
+    public Branch findBranchByName(String name) {
+        return staffBean.findBranchByName(name);
+    }
+
+    /**
+     * Delegates the find employees of branch request to the staff bean and returns the list of employees.
+     *
+     * @param branchId The ID of the branch.
+     * @return The list of employees.
+     */
+    public List<Employee> findEmployeesOfBranch(Integer branchId) {
+        return staffBean.findEmployeesOfBranch(branchId);
+    }
+
+    // Statistics microservice.
 
     /**
      * Delegates the organization statistics request to the statistics bean and returns the organization statistics.

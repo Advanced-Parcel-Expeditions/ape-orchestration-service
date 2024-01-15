@@ -3,10 +3,7 @@ package si.ape.orchestration.api.v1.resources;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
-import si.ape.orchestration.lib.Customer;
-import si.ape.orchestration.lib.Employee;
-import si.ape.orchestration.lib.Job;
-import si.ape.orchestration.lib.Parcel;
+import si.ape.orchestration.lib.*;
 import si.ape.orchestration.lib.requests.authentication.LoginRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterCustomerRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterEmployeeRequest;
@@ -296,6 +293,65 @@ public class OrchestrationResource {
         }
     }
 
+    // Staff.
+
+    @Operation(description = "Attempts to retrieve a branch by its name.", summary = "View branch by name")
+    @APIResponses({
+            @APIResponse(responseCode = "200",
+                    description = "Branch has been returned successfully."
+            ),
+            @APIResponse(responseCode = "404",
+                    description = "Branch has not been returned successfully."
+            ),
+            @APIResponse(responseCode = "500",
+                    description = "Internal server error."
+            )
+    })
+    @GET
+    @Path("/branch/{name}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findBranchByName(@PathParam("name") String name) {
+        try {
+            Branch branch = orchestrationBean.findBranchByName(name);
+            if (branch != null) {
+                return Response.ok(branch).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Operation(description = "Attempts to retrieve employees of a branch.", summary = "View employees of branch")
+    @APIResponses({
+            @APIResponse(responseCode = "200",
+                    description = "Employees have been returned successfully."
+            ),
+            @APIResponse(responseCode = "404",
+                    description = "Employees have not been returned successfully."
+            ),
+            @APIResponse(responseCode = "500",
+                    description = "Internal server error."
+            )
+    })
+    @GET
+    @Path("/employees/{branchId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findEmployeesOfBranch(@PathParam("branchId") Integer branchId) {
+        try {
+            List<Employee> employees = orchestrationBean.findEmployeesOfBranch(branchId);
+            if (employees != null) {
+                return Response.ok(employees).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     // Statistics.
 

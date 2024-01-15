@@ -9,6 +9,9 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.logging.Logger;
 
 /**
  * The StatisticsBean class is a class which takes care of communication with the statistics microservice and provides
@@ -17,6 +20,8 @@ import javax.ws.rs.client.ClientBuilder;
 @RequestScoped
 public class StatisticsBean {
 
+    private Logger log = Logger.getLogger(StatisticsBean.class.getName());
+
     /**
      * The viewStatistics method is used to retrieve the statistics of the organization.
      *
@@ -24,9 +29,17 @@ public class StatisticsBean {
      */
     public OrganizationStatisticsResponse viewStatistics() {
         Client client = ClientBuilder.newClient();
-        return client.target("http://dev.okeanos.mywire.org/statistics/v1/statistics")
-                .request()
-                .get(OrganizationStatisticsResponse.class);
+        Response response = client.target("http://dev.okeanos.mywire.org/statistics/v1/statistics")
+                .request(MediaType.APPLICATION_JSON)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .get();
+
+        if (response.getStatus() == 200) {
+            return response.readEntity(OrganizationStatisticsResponse.class);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -37,9 +50,17 @@ public class StatisticsBean {
      */
     public BranchStatisticsResponse viewStatisticsOfBranch(Integer branchId) {
         Client client = ClientBuilder.newClient();
-        return client.target("http://dev.okeanos.mywire.org/statistics/v1/statistics/branch/" + branchId)
-                .request()
-                .get(BranchStatisticsResponse.class);
+        Response response = client.target("http://dev.okeanos.mywire.org/statistics/v1/statistics/branch/" + branchId)
+                .request(MediaType.APPLICATION_JSON)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .get();
+
+        if (response.getStatus() == 200) {
+            return response.readEntity(BranchStatisticsResponse.class);
+        } else {
+            return null;
+        }
     }
 
 }

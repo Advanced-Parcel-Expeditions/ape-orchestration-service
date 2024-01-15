@@ -1,7 +1,8 @@
 package si.ape.orchestration.services.beans;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 
-@ApplicationScoped
+@RequestScoped
 public class CustomerBean {
 }

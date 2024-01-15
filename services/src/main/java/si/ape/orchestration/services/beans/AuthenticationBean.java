@@ -5,6 +5,7 @@ import si.ape.orchestration.lib.requests.authentication.RegisterCustomerRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterEmployeeRequest;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.client.Client;
@@ -18,11 +19,8 @@ import javax.ws.rs.core.SecurityContext;
  * takes care of login and registration of users, and basically acts as a proxy between the authentication microservice
  * and the rest of the application.
  */
-@ApplicationScoped
+@RequestScoped
 public class AuthenticationBean {
-
-    @Inject
-    private EntityManager em;
 
     /**
      * Attempts to log in the user. If the user is successfully logged in, the method attempts to extract the JWT token

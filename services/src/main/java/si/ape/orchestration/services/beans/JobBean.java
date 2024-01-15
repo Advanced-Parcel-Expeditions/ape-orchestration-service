@@ -12,6 +12,7 @@ import si.ape.orchestration.models.entities.JobStatusEntity;
 import si.ape.orchestration.models.entities.JobTypeEntity;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.client.Client;
@@ -28,7 +29,7 @@ import java.util.List;
  * the jobs microservice's GraphQL API and forwards the requests to the microservice. It also takes care of the responses
  * and forwards them to the client.
  */
-@ApplicationScoped
+@RequestScoped
 public class JobBean {
 
     @Inject

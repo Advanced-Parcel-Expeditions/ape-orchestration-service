@@ -14,6 +14,7 @@ import si.ape.orchestration.lib.responses.statistics.BranchStatisticsResponse;
 import si.ape.orchestration.lib.responses.statistics.OrganizationStatisticsResponse;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -29,15 +30,12 @@ import java.util.logging.Logger;
  * The OrchestrationBean class works in such a way that it delegates the requests to the appropriate beans, which
  * handle the communication with the other microservices.
  */
-@ApplicationScoped
+@RequestScoped
 public class OrchestrationBean {
 
     /** The OrchestrationBean's logger. */
     private Logger log = Logger.getLogger(OrchestrationBean.class.getName());
 
-    /** The entity manager, which is used to communicate with the database. */
-    @Inject
-    private EntityManager em;
 
     /** The authentication bean, which is used to communicate with the authentication microservice. */
     @Inject
@@ -258,24 +256,5 @@ public class OrchestrationBean {
     @Deprecated
     public void addUserToConversation() {
         messagingBean.addUserToConversation();
-    }
-
-
-    private void beginTx() {
-        if (!em.getTransaction().isActive()) {
-            em.getTransaction().begin();
-        }
-    }
-
-    private void commitTx() {
-        if (em.getTransaction().isActive()) {
-            em.getTransaction().commit();
-        }
-    }
-
-    private void rollbackTx() {
-        if (em.getTransaction().isActive()) {
-            em.getTransaction().rollback();
-        }
     }
 }

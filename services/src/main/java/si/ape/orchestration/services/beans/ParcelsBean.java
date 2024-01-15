@@ -6,6 +6,7 @@ import si.ape.orchestration.lib.ParcelStatus;
 import si.ape.orchestration.lib.requests.parcels.CreateParcelRequest;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.client.Client;
@@ -18,7 +19,7 @@ import java.util.List;
  * The ParcelsBean class is a class which takes care of communication with the parcels microservice and provides
  * the parcels to the frontend application.
  */
-@ApplicationScoped
+@RequestScoped
 public class ParcelsBean {
 
     @Inject

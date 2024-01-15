@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -54,7 +55,7 @@ public class ParcelsBean {
      *
      * @param createParcelRequest The request containing the information about the parcel.
      */
-    public void createParcel(CreateParcelRequest createParcelRequest) {
+    public String createParcel(CreateParcelRequest createParcelRequest) {
         Customer sender = em.find(Customer.class, createParcelRequest.getSenderId());
         Customer recipient = em.find(Customer.class, createParcelRequest.getRecipientId());
         ParcelStatus parcelStatus = em.find(ParcelStatus.class, 1);
@@ -68,9 +69,14 @@ public class ParcelsBean {
         parcel.setDepth(createParcelRequest.getDepth());
 
         Client client = ClientBuilder.newClient();
-        client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
+        Response response = client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
                 .request()
-                .post(Entity.json(parcel));
+                .post(Entity.json(parcel), Response.class);
+
+        if (response.getStatus() == 200) {
+            // TODO: Deserialize the parcel
+        }
+        return null;
     }
 
 }

@@ -5,9 +5,11 @@ import si.ape.orchestration.lib.Parcel;
 import si.ape.orchestration.lib.requests.authentication.LoginRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterCustomerRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterEmployeeRequest;
+import si.ape.orchestration.lib.requests.job.CreateJobRequest;
+import si.ape.orchestration.lib.requests.job.ViewJobsWithStatusRequest;
 import si.ape.orchestration.lib.requests.parcels.CreateParcelRequest;
-import si.ape.orchestration.lib.responses.messaging.BranchStatisticsResponse;
-import si.ape.orchestration.lib.responses.messaging.OrganizationStatisticsResponse;
+import si.ape.orchestration.lib.responses.statistics.BranchStatisticsResponse;
+import si.ape.orchestration.lib.responses.statistics.OrganizationStatisticsResponse;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -102,12 +104,22 @@ public class OrchestrationBean {
     /**
      * Delegates the view jobs with status request to the jobs bean and returns the list of jobs.
      *
-     * @param employeeId  The ID of the employee.
-     * @param jobStatusId The ID of the job status.
+     * @param employeeId The ID of the employee.
+     * @param statusId   The ID of the status.
      * @return The list of jobs.
      */
-    public List<Job> viewJobsWithStatus(Integer employeeId, Integer jobStatusId) {
-        return jobBean.viewJobsWithStatus(employeeId, jobStatusId);
+    public List<Job> viewJobsWithStatus(Integer employeeId, Integer statusId) {
+        return jobBean.viewJobsWithStatus(employeeId, statusId);
+    }
+
+    /**
+     * Delegates the view job request to the jobs bean and returns the parcel belonging to the job.
+     *
+     * @param jobId The ID of the job.
+     * @return The parcel.
+     */
+    public Parcel viewParcelOfJob(Integer jobId) {
+        return jobBean.viewParcelOfJob(jobId);
     }
 
     /**
@@ -115,26 +127,29 @@ public class OrchestrationBean {
      *
      * @return True if the job was created, false otherwise.
      */
-    public boolean createJob() {
-        return jobBean.createJob();
+    public boolean createJob(CreateJobRequest createJobRequest) {
+        String parcelId = parcelsBean.createParcel(createJobRequest.getParcel());
+        return jobBean.createJob(createJobRequest, parcelId);
     }
 
     /**
      * Delegates the complete job request to the jobs bean and returns the success.
      *
+     * @param jobId The ID of the job.
      * @return True if the job was completed, false otherwise.
      */
-    public boolean completeJob() {
-        return jobBean.completeJob();
+    public boolean completeJob(Integer jobId) {
+        return jobBean.completeJob(jobId);
     }
 
     /**
      * Delegates the cancel job request to the jobs bean and returns the success.
      *
+     * @param jobId The ID of the job.
      * @return True if the job was cancelled, false otherwise.
      */
-    public boolean cancelJob() {
-        return jobBean.cancelJob();
+    public boolean cancelJob(Integer jobId) {
+        return jobBean.cancelJob(jobId);
     }
 
 
@@ -193,22 +208,27 @@ public class OrchestrationBean {
 
     // Messaging microservice.
 
+    @Deprecated
     public void viewConversations() {
         messagingBean.viewConversations();
     }
 
+    @Deprecated
     public void viewMessagesInConversation() {
         messagingBean.viewMessagesInConversation();
     }
 
+    @Deprecated
     public void sendMessage() {
         messagingBean.sendMessage();
     }
 
+    @Deprecated
     public void createConversation() {
         messagingBean.createConversation();
     }
 
+    @Deprecated
     public void addUserToConversation() {
         messagingBean.addUserToConversation();
     }

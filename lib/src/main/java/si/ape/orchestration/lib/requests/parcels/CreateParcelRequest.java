@@ -2,24 +2,32 @@ package si.ape.orchestration.lib.requests.parcels;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import javax.json.bind.annotation.JsonbProperty;
+
 public class CreateParcelRequest {
 
     @Schema(description = "Weight of the parcel.", example = "6.9", required = true)
+    @JsonbProperty("weight")
     private Double weight;
 
     @Schema(description = "Width of the parcel.", example = "10", required = true)
+    @JsonbProperty("width")
     private Integer width;
 
     @Schema(description = "Height of the parcel.", example = "10", required = true)
+    @JsonbProperty("height")
     private Integer height;
 
     @Schema(description = "Depth of the parcel.", example = "10", required = true)
+    @JsonbProperty("depth")
     private Integer depth;
 
     @Schema(description = "Sender ID of the parcel The Customer (not User) ID.", example = "1", required = true)
+    @JsonbProperty("senderId")
     private Integer senderId;
 
     @Schema(description = "Recipient ID of the parcel. The Customer (not User) ID.", example = "2", required = true)
+    @JsonbProperty("recipientId")
     private Integer recipientId;
 
     public Double getWeight() {

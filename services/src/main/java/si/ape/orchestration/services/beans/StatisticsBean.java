@@ -1,7 +1,7 @@
 package si.ape.orchestration.services.beans;
 
-import si.ape.orchestration.lib.responses.messaging.BranchStatisticsResponse;
-import si.ape.orchestration.lib.responses.messaging.OrganizationStatisticsResponse;
+import si.ape.orchestration.lib.responses.statistics.BranchStatisticsResponse;
+import si.ape.orchestration.lib.responses.statistics.OrganizationStatisticsResponse;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

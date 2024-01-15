@@ -1,4 +1,4 @@
-package si.ape.orchestration.lib.responses.messaging;
+package si.ape.orchestration.lib.responses.statistics;
 
 public class BranchStatisticsResponse {
 

@@ -24,9 +24,6 @@ public class AuthenticationBean {
     @Inject
     private EntityManager em;
 
-    @Inject
-    private SecurityContext sc;
-
     /**
      * Attempts to log in the user. If the user is successfully logged in, the method attempts to extract the JWT token
      * from the response and forwards it to the client.
@@ -36,7 +33,7 @@ public class AuthenticationBean {
      */
     public String login(LoginRequest loginRequest) {
         Client client = ClientBuilder.newClient();
-        Response response = client.target("http://dev.okeanos.mywire.org/auth/v1/auth/login")
+        Response response = client.target("http://dev.okeanos.mywire.org/authentication/v1/auth/login")
                 .request()
                 .post(Entity.json(loginRequest), Response.class);
 
@@ -56,7 +53,7 @@ public class AuthenticationBean {
      */
     public boolean registerCustomer(RegisterCustomerRequest registerCustomerRequest) {
         Client client = ClientBuilder.newClient();
-        Response response = client.target("http://dev.okeanos.mywire.org/auth/v1/auth/register/customer")
+        Response response = client.target("http://dev.okeanos.mywire.org/authentication/v1/auth/register/customer")
                 .request()
                 .post(Entity.json(registerCustomerRequest), Response.class);
 
@@ -78,7 +75,7 @@ public class AuthenticationBean {
      */
     public boolean registerEmployee(RegisterEmployeeRequest registerEmployeeRequest) {
         Client client = ClientBuilder.newClient();
-        Response response = client.target("http://dev.okeanos.mywire.org/auth/v1/auth/register/employee")
+        Response response = client.target("http://dev.okeanos.mywire.org/authentication/v1/auth/register/employee")
                 .request()
                 .post(Entity.json(registerEmployeeRequest), Response.class);
 

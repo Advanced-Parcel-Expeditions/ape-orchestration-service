@@ -1,4 +1,4 @@
-package si.ape.orchestration.lib.responses.messaging;
+package si.ape.orchestration.lib.responses.statistics;
 
 import java.util.ArrayList;
 import java.util.List;

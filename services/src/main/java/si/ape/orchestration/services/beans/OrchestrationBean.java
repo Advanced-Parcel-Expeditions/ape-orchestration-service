@@ -46,6 +46,7 @@ public class OrchestrationBean {
     @Inject
     private StaffBean staffBean;
 
+    /** The location bean, which is used to communicate with the location microservice. */
     @Inject
     private LocationBean locationBean;
 

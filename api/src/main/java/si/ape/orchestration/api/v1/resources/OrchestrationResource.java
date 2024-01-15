@@ -353,6 +353,37 @@ public class OrchestrationResource {
         }
     }
 
+    // Locations.
+    @Operation(description = "Attempts to retrieve employees of a branch.", summary = "View employees of branch")
+    @APIResponses({
+            @APIResponse(responseCode = "200",
+                    description = "Employees have been returned successfully."
+            ),
+            @APIResponse(responseCode = "404",
+                    description = "Employees have not been returned successfully."
+            ),
+            @APIResponse(responseCode = "500",
+                    description = "Internal server error."
+            )
+    })
+    @GET
+    @Path("/street-search/{searchString}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchStreetByName(@PathParam("searchString") String searchString) {
+        try {
+            List<Street> streets = orchestrationBean.findStreetWithName(searchString);
+            if (streets != null) {
+                return Response.ok(streets).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
     // Statistics.
 
     @Operation(description = "Get statistics for the whole organisation.", summary = "Get overall statistics")

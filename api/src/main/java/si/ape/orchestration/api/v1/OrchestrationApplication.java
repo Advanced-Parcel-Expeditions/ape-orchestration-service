@@ -13,7 +13,7 @@ import org.eclipse.microprofile.openapi.annotations.servers.Server;
 @OpenAPIDefinition(info = @Info(title = "Orchestration API", version = "v1",
         contact = @Contact(email = "ls6727@student.uni-lj.si, js1471@student.uni-lj.si"),
         license = @License(name = "dev"), description = "API providing orchestration to the APE project. It is a " +
-                                                        "facade for the other microservices"),
+                                                        "facade for the other microservices."),
         servers = @Server(url = "http://localhost:8080/"))
 @ApplicationPath("/v1")
 public class OrchestrationApplication extends Application {

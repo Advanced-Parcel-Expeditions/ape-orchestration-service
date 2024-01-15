@@ -3,6 +3,7 @@ package si.ape.orchestration.services.beans;
 import si.ape.orchestration.lib.Branch;
 import si.ape.orchestration.lib.Employee;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.client.Client;
@@ -10,6 +11,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+@ApplicationScoped
 public class StaffBean {
 
     @Inject

@@ -1,9 +1,6 @@
 package si.ape.orchestration.services.beans;
 
-import si.ape.orchestration.lib.Branch;
-import si.ape.orchestration.lib.Employee;
-import si.ape.orchestration.lib.Job;
-import si.ape.orchestration.lib.Parcel;
+import si.ape.orchestration.lib.*;
 import si.ape.orchestration.lib.requests.authentication.LoginRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterCustomerRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterEmployeeRequest;
@@ -48,6 +45,9 @@ public class OrchestrationBean {
     /** The staff bean, which is used to communicate with the staff microservice. */
     @Inject
     private StaffBean staffBean;
+
+    @Inject
+    private LocationBean locationBean;
 
     /** The statistics bean, which is used to communicate with the statistics microservice. */
     @Inject
@@ -176,6 +176,18 @@ public class OrchestrationBean {
      */
     public List<Employee> findEmployeesOfBranch(Integer branchId) {
         return staffBean.findEmployeesOfBranch(branchId);
+    }
+
+    // Location microservice.
+
+    /**
+     * Delegates the find street with name request to the location bean and returns the list of streets.
+     *
+     * @param name The name of the street.
+     * @return The list of streets.
+     */
+    public List<Street> findStreetWithName(String name) {
+        return locationBean.findStreetWithName(name);
     }
 
     // Statistics microservice.

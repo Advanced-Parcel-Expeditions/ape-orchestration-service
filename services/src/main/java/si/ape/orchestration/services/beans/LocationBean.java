@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
@@ -30,11 +31,15 @@ public class LocationBean {
     public List<Street> findStreetWithName(String name) {
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/api/locations/v1/locations/street-search/" + name)
-                .request()
+                .request(MediaType.APPLICATION_JSON)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
                 .get();
 
         if (response.getStatus() == 200) {
-            return response.readEntity(List.class);
+            List<Street> streets = response.readEntity(List.class);
+            System.out.println(streets);
+            return streets;
         } else {
             return null;
         }

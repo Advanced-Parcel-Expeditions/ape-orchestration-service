@@ -313,9 +313,9 @@ public class OrchestrationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findBranchByName(@PathParam("name") String name) {
         try {
-            Branch branch = orchestrationBean.findBranchByName(name);
-            if (branch != null) {
-                return Response.ok(branch).build();
+            List<Branch> branches = orchestrationBean.findBranchByName(name);
+            if (branches != null) {
+                return Response.ok(branches).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }

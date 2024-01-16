@@ -165,7 +165,7 @@ public class OrchestrationBean {
      * @param name The name of the branch.
      * @return The branch.
      */
-    public Branch findBranchByName(String name) {
+    public List<Branch> findBranchByName(String name) {
         return staffBean.findBranchByName(name);
     }
 

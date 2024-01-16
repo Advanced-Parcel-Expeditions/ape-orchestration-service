@@ -7,6 +7,8 @@ import si.ape.orchestration.lib.*;
 import si.ape.orchestration.lib.requests.authentication.LoginRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterCustomerRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterEmployeeRequest;
+import si.ape.orchestration.lib.requests.job.CancelJobRequest;
+import si.ape.orchestration.lib.requests.job.CompleteJobRequest;
 import si.ape.orchestration.lib.requests.job.CreateJobRequest;
 import si.ape.orchestration.services.beans.OrchestrationBean;
 
@@ -147,6 +149,7 @@ public class OrchestrationResource {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -176,6 +179,7 @@ public class OrchestrationResource {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -205,6 +209,7 @@ public class OrchestrationResource {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -253,9 +258,9 @@ public class OrchestrationResource {
     @Path("/complete-job")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response completeJob(Integer jobId) {
+    public Response completeJob(CompleteJobRequest completeJobRequest) {
         try {
-            if (orchestrationBean.completeJob(jobId)) {
+            if (orchestrationBean.completeJob(completeJobRequest.getJobId())) {
                 return Response.ok().build();
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).build();
@@ -281,9 +286,9 @@ public class OrchestrationResource {
     @Path("/cancel-job")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cancelJob(Integer jobId) {
+    public Response cancelJob(CancelJobRequest cancelJobRequest) {
         try {
-            if (orchestrationBean.cancelJob(jobId)) {
+            if (orchestrationBean.cancelJob(cancelJobRequest.getJobId())) {
                 return Response.ok().build();
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).build();
@@ -458,12 +463,12 @@ public class OrchestrationResource {
         }
     }
 
-    @Operation(description = "Get statistics for a specific branch.", summary = "Get branch statistics")
+    @Operation(description = "Get data of a specific parcel.", summary = "Get parcel")
     @APIResponses({
             @APIResponse(responseCode = "200",
-                    description = "Statistics for a specific branch."
+                    description = "Data about a parcel is retrieved."
             ),
-            @APIResponse(responseCode = "404", description = "Statistics could not be found.")
+            @APIResponse(responseCode = "404", description = "Data about a parcel could not be retrieved.")
     })
     @GET
     @Path("/parcels/{parcelId}")
@@ -499,7 +504,5 @@ public class OrchestrationResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
-
-    // Messaging.
 
 }

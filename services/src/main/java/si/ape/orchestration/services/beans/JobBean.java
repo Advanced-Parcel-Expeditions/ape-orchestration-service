@@ -1,5 +1,6 @@
 package si.ape.orchestration.services.beans;
 
+import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import si.ape.orchestration.lib.Job;
@@ -7,9 +8,11 @@ import si.ape.orchestration.lib.Parcel;
 import si.ape.orchestration.lib.requests.job.CreateJobRequest;
 import si.ape.orchestration.lib.requests.job.ViewJobsWithStatusRequest;
 import si.ape.orchestration.models.converters.JobConverter;
+import si.ape.orchestration.models.entities.EmployeeEntity;
 import si.ape.orchestration.models.entities.JobEntity;
 import si.ape.orchestration.models.entities.JobStatusEntity;
 import si.ape.orchestration.models.entities.JobTypeEntity;
+import si.ape.orchestration.services.beans.graphql.ParcelConnection;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
@@ -36,59 +39,68 @@ public class JobBean {
     private EntityManager em;
 
     /** The getJobsOfEmployee query. */
-    private final String viewJobsQuery = "query JobsOfEmployee {\n" +
-            "    jobsOfEmployee(employeeId: ?) {\n" +
-            "        totalCount\n" +
-            "        edges {\n" +
-            "            dateCompleted\n" +
-            "            dateCreated\n" +
-            "            id\n" +
-            "            jobStatus {\n" +
-            "                id\n" +
-            "                name\n" +
-            "            }\n" +
-            "            jobType {\n" +
-            "                id\n" +
-            "                name\n" +
-            "            }\n" +
-            "        }\n" +
-            "    }\n" +
-            "}\n";
+    private final String viewJobsQuery = "{"
+            + "\"query\": \"query JobsOfEmployee { "
+            + "jobsOfEmployee(employeeId: <set-employee-id>) { "
+            + "totalCount "
+            + "edges { "
+            + "dateCompleted "
+            + "dateCreated "
+            + "id "
+            + "jobStatus { "
+            + "id "
+            + "name "
+            + "} "
+            + "jobType { "
+            + "id "
+            + "name "
+            + "} "
+            + "} "
+            + "} "
+            + "}\", "
+            + "\"variables\": {}"
+            + "}";
 
     /** The getJobsOfEmployeeWithStatus query. */
-    private final String viewJobsWithStatusQuery = "query JobsOfEmployeeWithStatus {\n" +
-            "    jobsOfEmployeeWithStatus(employeeId: ?, status: !) {\n" +
+    private final String viewJobsWithStatusQuery = "{\n" +
+            "  \"query\": \"query JobsOfEmployeeWithStatus { jobsOfEmployeeWithStatus(employeeId: <set-employee-id>, status: <set-status-id>) { totalCount edges { dateCompleted dateCreated id jobStatus { id name } jobType { id name } } } }\",\n" +
+            "  \"variables\": null\n" +
+            "}";
+
+    /** The viewParcelOfJob query. */
+    private final String viewParcelOfJobQuery = "{\n" +
+            "  \"query\": \"query ViewParcelOfJob { viewParcelOfJob(jobId: <set-job-id>) { totalCount edges { depth height id weight width parcelStatus { id name } recipient { companyName id name surname telNum street { streetName streetNumber city { code latitude longitude name country { code name } } } user { id password username role { id roleName } } } recipientStreet { streetName streetNumber city { code latitude longitude name country { code name } } } sender { companyName id name surname telNum street { streetName streetNumber city { code latitude longitude name country { code name } } } user { id password username role { id roleName } } } senderStreet { streetName streetNumber city { code latitude longitude name country { code name } } } } } }\",\n" +
+            "  \"variables\": null\n" +
+            "}";
+
+    /** The createJob mutation. */
+    private final String createJobMutation = "mutation CreateJob {\n" +
+            "    createJob(\n" +
+            "        jobRequest: { parcelId: \"<set-parcel-id>\", job: { jobType: { id: <set-job-type-id> }, staff: { id: <set-staff-id> } } }\n" +
+            "    ) {\n" +
             "        totalCount\n" +
             "        edges {\n" +
             "            dateCompleted\n" +
             "            dateCreated\n" +
             "            id\n" +
-            "            jobStatus {\n" +
-            "                id\n" +
-            "                name\n" +
-            "            }\n" +
-            "            jobType {\n" +
-            "                id\n" +
-            "                name\n" +
-            "            }\n" +
             "        }\n" +
             "    }\n" +
-            "}\n";
-
-    /** The viewParcelOfJob query. */
-    private final String viewParcelOfJobQuery = "";
-
-    /** The createJob mutation. */
-    private final String createJobMutation = "";
+            "}";
 
     /** The completeJob mutation. */
-    private final String completeJobMutation = "";
+    private final String completeJobMutation = "{\n" +
+            "  \"query\": \"mutation CompleteJob { completeJob(jobId: <set-job-id>) { totalCount edges { dateCompleted dateCreated id jobStatus { id name } jobType { id name } staff { id name surname } } } }\"\n" +
+            "}";
 
     /** The linkJobAndParcel mutation. */
-    private final String linkJobAndParcelMutation = "";
+    private final String linkJobAndParcelMutation = "{\n" +
+            "  \"query\": \"mutation LinkJobAndParcel { linkJobAndParcel(jobId: <set-job-id>, parcelId: \\\"<set-parcel-id>\\\") { totalCount edges { dateCompleted dateCreated id } } }\"\n" +
+            "}";
 
     /** The cancelJob mutation. */
-    private final String cancelJobMutation = "";
+    private final String cancelJobMutation = "{\n" +
+            "  \"query\": \"mutation CancelJob { cancelJob(jobId: <set-job-id>) { totalCount edges { dateCompleted dateCreated id jobStatus { id name } jobType { id name } } } }\"\n" +
+            "}";
 
     /**
      * Queries the jobs microservice's GraphQL API and returns the jobs of the employee.
@@ -97,10 +109,13 @@ public class JobBean {
      * @return The jobs of the employee.
      */
     public List<Job> viewJobs(Integer employeeId) {
+
         Client client = ClientBuilder.newClient();
-        Response response = client.target("http://dev.okeanos.mywire.org/jobs/v1/graphql")
+        Response response = client.target("http://dev.okeanos.mywire.org/jobs/graphql")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(viewJobsQuery.replace("?", Integer.toString(employeeId))), Response.class);
+                .post(Entity.json(viewJobsQuery.replace("<set-employee-id>", Integer.toString(employeeId))), Response.class);
+
+        System.out.println("Response status: " + response.getStatus());
 
         if (response.getStatus() == 200) {
             String responseJson = response.readEntity(String.class);
@@ -115,7 +130,10 @@ public class JobBean {
                 JSONObject edge = edges.getJSONObject(i);
                 JSONObject jobStatus = edge.getJSONObject("jobStatus");
                 JSONObject jobType = edge.getJSONObject("jobType");
-                String dateCompleted = edge.getString("dateCompleted");
+                String dateCompleted = "null";
+                if (!edge.isNull("dateCompleted")) {
+                    dateCompleted = edge.getString("dateCompleted");
+                }
                 String dateCreated = edge.getString("dateCreated");
                 Integer id = edge.getInt("id");
 
@@ -125,7 +143,8 @@ public class JobBean {
                 if (!dateCompleted.equals("null")) {
                     job.setDateCompleted(Instant.parse(dateCompleted));
                 }
-                job.setDateCreated(Instant.parse(dateCreated));
+                job.setStaff(em.find(EmployeeEntity.class, employeeId));
+                job.setDateCreated(Instant.parse(dateCreated.strip() + "Z"));
                 job.setId(id);
 
                 jobEntities.add(job);
@@ -146,11 +165,13 @@ public class JobBean {
      */
     public List<Job> viewJobsWithStatus(Integer employeeId, Integer statusId) {
         Client client = ClientBuilder.newClient();
-        String viewJobsWithStatusQuery = this.viewJobsWithStatusQuery.replace("?", Integer.toString(employeeId));
-        viewJobsWithStatusQuery = viewJobsWithStatusQuery.replace("!", Integer.toString(statusId));
-        Response response = client.target("http://dev.okeanos.mywire.org/jobs/v1/graphql")
+        String viewJobsWithStatusQuery = this.viewJobsWithStatusQuery.replace("<set-employee-id>", Integer.toString(employeeId));
+        viewJobsWithStatusQuery = viewJobsWithStatusQuery.replace("<set-status-id>", Integer.toString(statusId));
+        Response response = client.target("http://dev.okeanos.mywire.org/jobs/graphql")
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(viewJobsWithStatusQuery), Response.class);
+
+        System.out.println("Response status: " + response.getStatus());
 
         if (response.getStatus() == 200) {
             String responseJson = response.readEntity(String.class);
@@ -165,7 +186,10 @@ public class JobBean {
                 JSONObject edge = edges.getJSONObject(i);
                 JSONObject jobStatus = edge.getJSONObject("jobStatus");
                 JSONObject jobType = edge.getJSONObject("jobType");
-                String dateCompleted = edge.getString("dateCompleted");
+                String dateCompleted = "null";
+                if (!edge.isNull("dateCompleted")) {
+                    dateCompleted = edge.getString("dateCompleted");
+                }
                 String dateCreated = edge.getString("dateCreated");
                 Integer id = edge.getInt("id");
 
@@ -175,9 +199,11 @@ public class JobBean {
                 if (!dateCompleted.equals("null")) {
                     job.setDateCompleted(Instant.parse(dateCompleted));
                 }
-                job.setDateCreated(Instant.parse(dateCreated));
+                job.setStaff(em.find(EmployeeEntity.class, employeeId));
+                job.setDateCreated(Instant.parse(dateCreated.strip() + "Z"));
                 job.setId(id);
 
+                jobEntities.add(job);
                 jobEntities.add(job);
             }
             return jobEntities.stream().map(JobConverter::toDto).toList();
@@ -194,30 +220,27 @@ public class JobBean {
      */
     public Parcel viewParcelOfJob(Integer jobId) {
         Client client = ClientBuilder.newClient();
-        Response response = client.target("http://dev.okeanos.mywire.org/jobs/v1/graphql")
+        Response response = client.target("http://dev.okeanos.mywire.org/jobs/graphql")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(viewParcelOfJobQuery.replace("?", Integer.toString(jobId))), Response.class);
+                .post(Entity.json(viewParcelOfJobQuery.replace("<set-job-id>", Integer.toString(jobId))), Response.class);
+
+        System.out.println("Response status: " + response.getStatus());
 
         if (response.getStatus() == 200) {
-            String responseJson = response.readEntity(String.class);
-            JSONObject responseJsonObject = new JSONObject(responseJson);
-            JSONObject job = responseJsonObject.getJSONObject("data").getJSONObject("job");
-            JSONObject parcel = job.getJSONObject("parcel");
-            // TODO: Fix this after adding endpoints to the jobs microservice.
-            Integer depth = parcel.getInt("depth");
-            Integer height = parcel.getInt("height");
-            String id = parcel.getString("id");
-            Double weight = parcel.getDouble("weight");
-            Integer width = parcel.getInt("width");
+            String json = response.readEntity(String.class);
+            JSONObject jsonObject = new JSONObject(json);
+            System.out.println(jsonObject.toString());
+            JSONObject data = jsonObject.getJSONObject("data");
+            JSONObject viewParcelOfJob = data.getJSONObject("viewParcelOfJob");
 
-            Parcel parcelDto = new Parcel();
-            parcelDto.setDepth(depth);
-            parcelDto.setHeight(height);
-            parcelDto.setId(id);
-            parcelDto.setWeight(weight);
-            parcelDto.setWidth(width);
-
-            return parcelDto;
+            // Deserialize the viewParcelOfJob object into a ParcelConnection object.
+            Gson gson = new Gson();
+            ParcelConnection parcelConnection = gson.fromJson(viewParcelOfJob.toString(), ParcelConnection.class);
+            if (parcelConnection.getEdges().isEmpty()) {
+                return null;
+            }
+            Parcel parcel = parcelConnection.getEdges().get(0);
+            return parcel;
         } else {
             return null;
         }
@@ -232,29 +255,17 @@ public class JobBean {
      * @return True if the job was created, false otherwise.
      */
     public boolean createJob(CreateJobRequest createJobRequest, String parcelId) {
-        Integer employeeId = createJobRequest.getEmployeeId();
-
         Client client = ClientBuilder.newClient();
-        Response response = client.target("http://dev.okeanos.mywire.org/jobs/v1/graphql")
+        String createJobMutation = this.createJobMutation.replace("<set-parcel-id>", parcelId);
+        createJobMutation = createJobMutation.replace("<set-job-type-id>", Integer.toString(1));
+        createJobMutation = createJobMutation.replace("<set-staff-id>", Integer.toString(createJobRequest.getEmployeeId()));
+        Response response = client.target("http://dev.okeanos.mywire.org/jobs/graphql")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(createJobMutation.replace("?", Integer.toString(employeeId))), Response.class);
+                .post(Entity.json(createJobMutation), Response.class);
 
-        if (response.getStatus() == 200) {
-            Integer jobId = response.readEntity(Integer.class);
+        System.out.println("Response status: " + response.getStatus());
 
-            client = ClientBuilder.newClient();
-            response = client.target("http://dev.okeanos.mywire.org/jobs/v1/graphql")
-                    .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.json(linkJobAndParcelMutation.replace("?", Integer.toString(jobId)).replace("!", parcelId)), Response.class);
-
-            if (response.getStatus() == 200) {
-                return true;
-            }
-
-            return false;
-        }
-
-        return false;
+        return response.getStatus() == 200;
     }
 
     /**
@@ -265,9 +276,9 @@ public class JobBean {
      */
     public boolean completeJob(Integer jobId) {
         Client client = ClientBuilder.newClient();
-        Response response = client.target("http://dev.okeanos.mywire.org/jobs/v1/graphql")
+        Response response = client.target("http://dev.okeanos.mywire.org/jobs/graphql")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(completeJobMutation.replace("?", Integer.toString(jobId))), Response.class);
+                .post(Entity.json(completeJobMutation.replace("<set-job-id>", Integer.toString(jobId))), Response.class);
 
         if (response.getStatus() == 200) {
             return true;
@@ -284,9 +295,9 @@ public class JobBean {
      */
     public boolean cancelJob(Integer jobId) {
         Client client = ClientBuilder.newClient();
-        Response response = client.target("http://dev.okeanos.mywire.org/jobs/v1/graphql")
+        Response response = client.target("http://dev.okeanos.mywire.org/jobs/graphql")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(cancelJobMutation.replace("?", Integer.toString(jobId))), Response.class);
+                .post(Entity.json(cancelJobMutation.replace("<set-job-id>", Integer.toString(jobId))), Response.class);
 
         if (response.getStatus() == 200) {
             return true;

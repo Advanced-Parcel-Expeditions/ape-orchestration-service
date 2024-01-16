@@ -12,6 +12,9 @@ import si.ape.orchestration.lib.requests.job.CompleteJobRequest;
 import si.ape.orchestration.lib.requests.job.CreateJobRequest;
 import si.ape.orchestration.services.beans.OrchestrationBean;
 
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -27,6 +30,8 @@ import java.util.logging.Logger;
 @Path("/orchestration")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@DeclareRoles({"Administrator", "Warehouse manager", "Warehouse agent", "Delivery driver", "International driver",
+        "Logistics agent", "Order confirmation specialist", "Customer"})
 public class OrchestrationResource {
 
     private final Logger log = Logger.getLogger(OrchestrationResource.class.getName());
@@ -53,6 +58,7 @@ public class OrchestrationResource {
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @PermitAll
     public Response login(LoginRequest loginRequest) {
         try {
             String rawToken = orchestrationBean.login(loginRequest);
@@ -82,6 +88,7 @@ public class OrchestrationResource {
     @Path("/register-customer")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Order confirmation specialist"})
     public Response registerCustomer(RegisterCustomerRequest registerCustomerRequest) {
         try {
             if (orchestrationBean.registerCustomer(registerCustomerRequest)) {
@@ -110,6 +117,7 @@ public class OrchestrationResource {
     @Path("/register-employee")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager"})
     public Response registerEmployee(RegisterEmployeeRequest registerEmployeeRequest) {
         try {
             if (orchestrationBean.registerEmployee(registerEmployeeRequest)) {
@@ -140,6 +148,8 @@ public class OrchestrationResource {
     @Path("/jobs/{employeeId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Warehouse agent", "Delivery driver", "International driver",
+            "Logistics agent", "Order confirmation specialist"})
     public Response viewJobs(@PathParam("employeeId") Integer employeeId) {
         try {
             List<Job> jobs = orchestrationBean.viewJobs(employeeId);
@@ -170,6 +180,8 @@ public class OrchestrationResource {
     @Path("/jobs/{employeeId}/status/{statusId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Warehouse agent", "Delivery driver", "International driver",
+            "Logistics agent", "Order confirmation specialist"})
     public Response viewJobsWithStatus(@PathParam("employeeId") Integer employeeId, @PathParam("statusId") Integer statusId) {
         try {
             List<Job> jobs = orchestrationBean.viewJobsWithStatus(employeeId, statusId);
@@ -200,6 +212,8 @@ public class OrchestrationResource {
     @Path("/job-parcel/{jobId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Warehouse agent", "Delivery driver", "International driver",
+            "Logistics agent", "Order confirmation specialist"})
     public Response viewParcelOfJob(@PathParam("jobId") Integer jobId) {
         try {
             Parcel parcel = orchestrationBean.viewParcelOfJob(jobId);
@@ -230,6 +244,7 @@ public class OrchestrationResource {
     @Path("/create-job")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Order confirmation specialist"})
     public Response createJob(CreateJobRequest createJobRequest) {
         try {
             if (orchestrationBean.createJob(createJobRequest)) {
@@ -258,6 +273,8 @@ public class OrchestrationResource {
     @Path("/complete-job")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Warehouse agent", "Delivery driver", "International driver",
+            "Logistics agent", "Order confirmation specialist"})
     public Response completeJob(CompleteJobRequest completeJobRequest) {
         try {
             if (orchestrationBean.completeJob(completeJobRequest.getJobId())) {
@@ -286,6 +303,8 @@ public class OrchestrationResource {
     @Path("/cancel-job")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Warehouse agent", "Delivery driver", "International driver",
+            "Logistics agent", "Order confirmation specialist"})
     public Response cancelJob(CancelJobRequest cancelJobRequest) {
         try {
             if (orchestrationBean.cancelJob(cancelJobRequest.getJobId())) {
@@ -316,6 +335,7 @@ public class OrchestrationResource {
     @Path("/branch/{name}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Logistics agent", "Order confirmation specialist"})
     public Response findBranchByName(@PathParam("name") String name) {
         try {
             List<Branch> branches = orchestrationBean.findBranchByName(name);
@@ -345,6 +365,7 @@ public class OrchestrationResource {
     @Path("/employees/{branchId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Logistics agent"})
     public Response findEmployeesOfBranch(@PathParam("branchId") Integer branchId) {
         try {
             List<Employee> employees = orchestrationBean.findEmployeesOfBranch(branchId);
@@ -360,13 +381,13 @@ public class OrchestrationResource {
 
     // Locations.
 
-    @Operation(description = "Attempts to retrieve employees of a branch.", summary = "View employees of branch")
+    @Operation(description = "Attempts to find a street by the given string.", summary = "Find street")
     @APIResponses({
             @APIResponse(responseCode = "200",
-                    description = "Employees have been returned successfully."
+                    description = "Streets have been returned successfully."
             ),
             @APIResponse(responseCode = "404",
-                    description = "Employees have not been returned successfully."
+                    description = "Streets have not been found."
             ),
             @APIResponse(responseCode = "500",
                     description = "Internal server error."
@@ -376,6 +397,7 @@ public class OrchestrationResource {
     @Path("/street-search/{searchString}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Logistics agent", "Order confirmation specialist"})
     public Response searchStreetByName(@PathParam("searchString") String searchString) {
         try {
             List<Street> streets = orchestrationBean.findStreetWithName(searchString);
@@ -402,6 +424,7 @@ public class OrchestrationResource {
     @Path("/statistics")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Logistics agent"})
     public Response viewStatistics() {
         try {
             return Response.ok(orchestrationBean.viewStatistics()).build();
@@ -421,6 +444,7 @@ public class OrchestrationResource {
     @Path("/statistics/{branchId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Logistics agent"})
     public Response viewStatisticsOfBranch(@PathParam("branchId") Integer branchId) {
         try {
             return Response.ok(orchestrationBean.viewStatisticsOfBranch(branchId)).build();
@@ -431,10 +455,10 @@ public class OrchestrationResource {
 
     // Parcels.
 
-    @Operation(description = "Get statistics for a specific branch.", summary = "Get branch statistics")
+    @Operation(description = "Get parcels where a user is either a sender or recipient.", summary = "Get parcels")
     @APIResponses({
             @APIResponse(responseCode = "200",
-                    description = "Statistics for a specific branch."
+                    description = "Parcels where the user is either a sender or recipient."
             ),
             @APIResponse(responseCode = "404", description = "Statistics could not be found.")
     })
@@ -442,6 +466,8 @@ public class OrchestrationResource {
     @Path("/parcels")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Warehouse agent", "Delivery driver", "International driver",
+            "Logistics agent", "Order confirmation specialist", "Customer"})
     public Response viewParcels(@QueryParam("senderId") Integer senderId,
                                 @QueryParam("recipientId") Integer recipientId) {
 
@@ -474,6 +500,8 @@ public class OrchestrationResource {
     @Path("/parcels/{parcelId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Warehouse agent", "Delivery driver", "International driver",
+            "Logistics agent", "Order confirmation specialist", "Customer"})
     public Response viewParcels(@PathParam("parcelId") String parcelId) {
 
         try {
@@ -496,6 +524,7 @@ public class OrchestrationResource {
     @Path("/customer/{searchString}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"Administrator", "Warehouse manager", "Logistics agent", "Order confirmation specialist"})
     public Response findCustomersBySearchString(@PathParam("searchString") String searchString) {
 
         try {

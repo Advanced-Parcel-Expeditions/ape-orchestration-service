@@ -354,6 +354,7 @@ public class OrchestrationResource {
     }
 
     // Locations.
+
     @Operation(description = "Attempts to retrieve employees of a branch.", summary = "View employees of branch")
     @APIResponses({
             @APIResponse(responseCode = "200",
@@ -382,7 +383,6 @@ public class OrchestrationResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 
     // Statistics.
 
@@ -423,8 +423,6 @@ public class OrchestrationResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
-
-    // Customers.
 
     // Parcels.
 
@@ -471,10 +469,32 @@ public class OrchestrationResource {
     @Path("/parcels/{parcelId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response viewParcels(@QueryParam("id") String id) {
+    public Response viewParcels(@PathParam("parcelId") String parcelId) {
 
         try {
-            return Response.ok(orchestrationBean.viewParcel(id)).build();
+            return Response.ok(orchestrationBean.viewParcel(parcelId)).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    // Customers.
+
+    @Operation(description = "Search customers by the given search string.", summary = "Search customers")
+    @APIResponses({
+            @APIResponse(responseCode = "200",
+                    description = "List of customers whose name, surname or username matches the given string."
+            ),
+            @APIResponse(responseCode = "404", description = "Customers could not be found.")
+    })
+    @GET
+    @Path("/customer/{searchString}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findCustomersBySearchString(@PathParam("searchString") String searchString) {
+
+        try {
+            return Response.ok(orchestrationBean.findCustomersBySearchString(searchString)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

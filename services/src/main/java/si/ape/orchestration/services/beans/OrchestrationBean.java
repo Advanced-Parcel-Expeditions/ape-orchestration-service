@@ -58,6 +58,10 @@ public class OrchestrationBean {
     @Inject
     private ParcelsBean parcelsBean;
 
+    /** The customer bean, which is used to communicate with the customer microservice. */
+    @Inject
+    private CustomerBean customerBean;
+
     /** The messaging bean, which is used to communicate with the messaging microservice. */
     @Inject
     private MessagingBean messagingBean;
@@ -252,6 +256,17 @@ public class OrchestrationBean {
         parcelsBean.createParcel(createParcelRequest);
     }
 
+    // Customer microservice.
+
+    /**
+     * Delegates the find customers by search string request to the customer bean and returns the list of customers.
+     *
+     * @param searchString The search string.
+     * @return The list of customers.
+     */
+    public List<Customer> findCustomersBySearchString(String searchString) {
+        return customerBean.findCustomersBySearchString(searchString);
+    }
 
     // Messaging microservice.
 

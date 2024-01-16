@@ -1,5 +1,6 @@
 package si.ape.orchestration.services.beans;
 
+import org.eclipse.microprofile.faulttolerance.Retry;
 import si.ape.orchestration.lib.Customer;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -30,6 +31,7 @@ public class CustomerBean {
      * @param searchString The name of the customer.
      * @return All the customers with the specified name.
      */
+    @Retry(maxRetries = 3)
     public List<Customer> findCustomersBySearchString(String searchString) {
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/customer/v1/customer/" + searchString)

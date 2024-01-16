@@ -1,5 +1,6 @@
 package si.ape.orchestration.services.beans;
 
+import org.eclipse.microprofile.faulttolerance.Retry;
 import si.ape.orchestration.lib.Customer;
 import si.ape.orchestration.lib.Parcel;
 import si.ape.orchestration.lib.ParcelStatus;
@@ -31,6 +32,7 @@ public class ParcelsBean {
      *
      * @return All the parcels.
      */
+    @Retry(maxRetries = 3)
     public List<Parcel> viewParcelsAsSender(Integer customerId) {
         Client client = ClientBuilder.newClient();
         Response response =  client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
@@ -52,6 +54,7 @@ public class ParcelsBean {
      *
      * @return All the parcels.
      */
+    @Retry(maxRetries = 3)
     public List<Parcel> viewParcelsAsRecipient(Integer customerId) {
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
@@ -74,6 +77,7 @@ public class ParcelsBean {
      * @param parcelId The ID of the parcel.
      * @return The parcel.
      */
+    @Retry(maxRetries = 3)
     public Parcel viewParcel(String parcelId) {
         Client client = ClientBuilder.newClient();
         Response response =  client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")

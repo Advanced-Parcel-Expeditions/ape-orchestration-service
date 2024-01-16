@@ -1,12 +1,13 @@
 package si.ape.orchestration.services.beans;
 
 import com.google.gson.Gson;
+import org.eclipse.microprofile.faulttolerance.Bulkhead;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import si.ape.orchestration.lib.Job;
 import si.ape.orchestration.lib.Parcel;
 import si.ape.orchestration.lib.requests.job.CreateJobRequest;
-import si.ape.orchestration.lib.requests.job.ViewJobsWithStatusRequest;
 import si.ape.orchestration.models.converters.JobConverter;
 import si.ape.orchestration.models.entities.EmployeeEntity;
 import si.ape.orchestration.models.entities.JobEntity;
@@ -14,7 +15,6 @@ import si.ape.orchestration.models.entities.JobStatusEntity;
 import si.ape.orchestration.models.entities.JobTypeEntity;
 import si.ape.orchestration.services.beans.graphql.ParcelConnection;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -33,6 +33,7 @@ import java.util.List;
  * and forwards them to the client.
  */
 @RequestScoped
+@CircuitBreaker(failOn = {RuntimeException.class}, requestVolumeThreshold = 4, failureRatio = 0.75, delay = 1000)
 public class JobBean {
 
     @Inject
@@ -274,6 +275,7 @@ public class JobBean {
      * @param jobId The ID of the job.
      * @return True if the job was completed, false otherwise.
      */
+    @Bulkhead(value = 40, waitingTaskQueue = 40)
     public boolean completeJob(Integer jobId) {
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/jobs/graphql")

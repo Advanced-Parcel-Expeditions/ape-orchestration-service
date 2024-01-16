@@ -1,5 +1,6 @@
 package si.ape.orchestration.services.beans;
 
+import org.eclipse.microprofile.faulttolerance.Retry;
 import si.ape.orchestration.lib.Branch;
 import si.ape.orchestration.lib.Employee;
 
@@ -26,6 +27,7 @@ public class StaffBean {
      * @param name The name of the branch.
      * @return The branch with the specified name.
      */
+    @Retry(maxRetries = 3)
     public List<Branch> findBranchByName(String name) {
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/staff/v1/staff/branches/" + name)
@@ -47,6 +49,7 @@ public class StaffBean {
      * @param branchId The ID of the branch.
      * @return All the employees of the branch.
      */
+    @Retry(maxRetries = 3)
     public List<Employee> findEmployeesOfBranch(Integer branchId) {
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/staff/v1/staff?branchId="  + branchId)

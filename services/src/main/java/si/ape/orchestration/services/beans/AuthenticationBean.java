@@ -1,5 +1,6 @@
 package si.ape.orchestration.services.beans;
 
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import si.ape.orchestration.lib.requests.authentication.LoginRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterCustomerRequest;
 import si.ape.orchestration.lib.requests.authentication.RegisterEmployeeRequest;
@@ -20,6 +21,7 @@ import javax.ws.rs.core.SecurityContext;
  * and the rest of the application.
  */
 @RequestScoped
+@CircuitBreaker(failOn = {IllegalStateException.class}, requestVolumeThreshold = 4)
 public class AuthenticationBean {
 
     /**
@@ -37,6 +39,8 @@ public class AuthenticationBean {
 
         if (response.getStatus() == 200) {
             return response.getHeaderString("Authorization");
+        } else if (response.getStatus() == 500) {
+            throw new IllegalStateException("Internal server error.");
         } else {
             return null;
         }

@@ -1,5 +1,6 @@
 package si.ape.orchestration.services.beans;
 
+import org.eclipse.microprofile.faulttolerance.Retry;
 import si.ape.orchestration.lib.responses.statistics.BranchStatisticsResponse;
 import si.ape.orchestration.lib.responses.statistics.OrganizationStatisticsResponse;
 
@@ -27,6 +28,7 @@ public class StatisticsBean {
      *
      * @return The statistics of the organization.
      */
+    @Retry(maxRetries = 3)
     public OrganizationStatisticsResponse viewStatistics() {
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/statistics/v1/statistics")
@@ -48,6 +50,7 @@ public class StatisticsBean {
      * @param branchId The ID of the branch.
      * @return The statistics of the branch.
      */
+    @Retry(maxRetries = 3)
     public BranchStatisticsResponse viewStatisticsOfBranch(Integer branchId) {
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/statistics/v1/statistics/branch/" + branchId)

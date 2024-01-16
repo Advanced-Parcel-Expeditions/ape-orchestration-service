@@ -1,5 +1,6 @@
 package si.ape.orchestration.services.beans;
 
+import org.eclipse.microprofile.faulttolerance.Retry;
 import si.ape.orchestration.lib.Street;
 
 import javax.enterprise.context.RequestScoped;
@@ -28,6 +29,7 @@ public class LocationBean {
      * @param name The name of the street.
      * @return All the streets with the specified name.
      */
+    @Retry(maxRetries = 3)
     public List<Street> findStreetWithName(String name) {
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/api/locations/v1/locations/street-search/" + name)

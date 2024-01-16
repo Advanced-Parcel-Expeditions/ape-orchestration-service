@@ -220,8 +220,17 @@ public class OrchestrationBean {
      *
      * @return The list of parcels.
      */
-    public List<Parcel> viewParcels() {
-        return parcelsBean.viewParcels();
+    public List<Parcel> viewParcelsAsSender(Integer customerId) {
+        return parcelsBean.viewParcelsAsSender(customerId);
+    }
+
+    /**
+     * Delegates the view parcels request to the parcels bean and returns the list of parcels.
+     *
+     * @return The list of parcels.
+     */
+    public List<Parcel> viewParcelsAsRecipient(Integer customerId) {
+        return parcelsBean.viewParcelsAsRecipient(customerId);
     }
 
     /**

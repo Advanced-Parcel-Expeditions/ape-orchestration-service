@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
@@ -26,15 +27,45 @@ public class ParcelsBean {
     private EntityManager em;
 
     /**
-     * The viewParcels method is used to retrieve all the parcels.
+     * The viewParcels method is used to retrieve all the parcels where the customer is the sender.
      *
      * @return All the parcels.
      */
-    public List<Parcel> viewParcels() {
+    public List<Parcel> viewParcelsAsSender(Integer customerId) {
         Client client = ClientBuilder.newClient();
-        return client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
-                .request()
-                .get(List.class);
+        Response response =  client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
+                .queryParam("senderId", customerId)
+                .request(MediaType.APPLICATION_JSON)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .get();
+
+        if (response.getStatus() == 200) {
+            return response.readEntity(List.class);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * The viewParcels method is used to retrieve all the parcels where the customer is the recipient.
+     *
+     * @return All the parcels.
+     */
+    public List<Parcel> viewParcelsAsRecipient(Integer customerId) {
+        Client client = ClientBuilder.newClient();
+        Response response = client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
+                .queryParam("recipientId", customerId)
+                .request(MediaType.APPLICATION_JSON)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .get();
+
+        if (response.getStatus() == 200) {
+            return response.readEntity(List.class);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -45,10 +76,21 @@ public class ParcelsBean {
      */
     public Parcel viewParcel(String parcelId) {
         Client client = ClientBuilder.newClient();
-        return client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels/")
+        Response response =  client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
                 .queryParam("id", parcelId)
                 .request()
-                .get(Parcel.class);
+                .get();
+
+        if (response.getStatus() == 200) {
+            List<Parcel> parcels = response.readEntity(List.class);
+            if (parcels != null && !parcels.isEmpty()) {
+                return parcels.get(0);
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     /**

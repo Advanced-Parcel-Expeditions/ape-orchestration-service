@@ -428,6 +428,58 @@ public class OrchestrationResource {
 
     // Parcels.
 
+    @Operation(description = "Get statistics for a specific branch.", summary = "Get branch statistics")
+    @APIResponses({
+            @APIResponse(responseCode = "200",
+                    description = "Statistics for a specific branch."
+            ),
+            @APIResponse(responseCode = "404", description = "Statistics could not be found.")
+    })
+    @GET
+    @Path("/parcels")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response viewParcels(@QueryParam("senderId") Integer senderId,
+                                @QueryParam("recipientId") Integer recipientId) {
+
+        if (senderId != null && recipientId != null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        try {
+            if (senderId != null) {
+                return Response.ok(orchestrationBean.viewParcelsAsSender(senderId)).build();
+            } else if (recipientId != null) {
+                return Response.ok(orchestrationBean.viewParcelsAsRecipient(recipientId)).build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Operation(description = "Get statistics for a specific branch.", summary = "Get branch statistics")
+    @APIResponses({
+            @APIResponse(responseCode = "200",
+                    description = "Statistics for a specific branch."
+            ),
+            @APIResponse(responseCode = "404", description = "Statistics could not be found.")
+    })
+    @GET
+    @Path("/parcels/{parcelId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response viewParcels(@QueryParam("id") String id) {
+
+        try {
+            return Response.ok(orchestrationBean.viewParcel(id)).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
     // Messaging.
 
 }

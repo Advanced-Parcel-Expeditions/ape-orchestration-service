@@ -118,17 +118,23 @@ public class JobBean {
             JSONArray edges = jobConnection.getJSONArray("edges");
 
             List<JobEntity> jobEntities = new ArrayList<>();
+            List<Job> jobs = new ArrayList<>();
 
             for (int i = 0; i < edges.length(); i++) {
                 JSONObject edge = edges.getJSONObject(i);
                 JSONObject jobStatus = edge.getJSONObject("jobStatus");
                 JSONObject jobType = edge.getJSONObject("jobType");
+
+                System.out.println(edge.toString());
+
                 String dateCompleted = "null";
                 if (!edge.isNull("dateCompleted")) {
                     dateCompleted = edge.getString("dateCompleted");
                 }
                 String dateCreated = edge.getString("dateCreated");
                 Integer id = edge.getInt("id");
+
+                System.out.println("JOBSTATUSID: " + jobStatus.getInt("id"));
 
                 JobEntity job = new JobEntity();
                 job.setJobStatus(em.find(JobStatusEntity.class, jobStatus.getInt("id")));
@@ -174,12 +180,14 @@ public class JobBean {
             JSONArray edges = jobConnection.getJSONArray("edges");
 
             List<JobEntity> jobEntities = new ArrayList<>();
+            List<Job> jobs = new ArrayList<>();
 
             for (int i = 0; i < edges.length(); i++) {
                 JSONObject edge = edges.getJSONObject(i);
                 JSONObject jobStatus = edge.getJSONObject("jobStatus");
                 JSONObject jobType = edge.getJSONObject("jobType");
                 String dateCompleted = "null";
+
                 if (!edge.isNull("dateCompleted")) {
                     dateCompleted = edge.getString("dateCompleted");
                 }
@@ -196,7 +204,6 @@ public class JobBean {
                 job.setDateCreated(Instant.parse(dateCreated.strip() + "Z"));
                 job.setId(id);
 
-                jobEntities.add(job);
                 jobEntities.add(job);
             }
             return jobEntities.stream().map(JobConverter::toDto).toList();
@@ -251,7 +258,7 @@ public class JobBean {
         Client client = ClientBuilder.newClient();
         String createJobMutation = this.createJobMutation.replace("<set-parcel-id>", parcelId);
         createJobMutation = createJobMutation.replace("<set-job-type-id>", Integer.toString(1));
-        createJobMutation = createJobMutation.replace("<set-staff-id>", Integer.toString(createJobRequest.getEmployeeId()));
+        createJobMutation = createJobMutation.replace("<set-employee-id>", Integer.toString(createJobRequest.getEmployeeId()));
         Response response = client.target("http://dev.okeanos.mywire.org/jobs/graphql")
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(createJobMutation), Response.class);

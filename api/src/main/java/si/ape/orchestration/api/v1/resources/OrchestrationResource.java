@@ -1,5 +1,7 @@
 package si.ape.orchestration.api.v1.resources;
 
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.SimplyTimed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
@@ -60,6 +62,8 @@ public class OrchestrationResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PermitAll
+    @Counted(name = "loginCounter", description = "How many times the login method has been invoked.")
+    @SimplyTimed(name = "loginTimer", description = "A measure of how long it takes to perform the login method.")
     public Response login(LoginRequest loginRequest) {
         try {
             String rawToken = orchestrationBean.login(loginRequest);
@@ -246,6 +250,7 @@ public class OrchestrationResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"Administrator", "Warehouse manager", "Order confirmation specialist"})
+    @Counted(name = "createJobCounter", description = "How many times the createJob method has been invoked.")
     public Response createJob(CreateJobRequest createJobRequest) {
         try {
             if (orchestrationBean.createJob(createJobRequest)) {
@@ -277,6 +282,8 @@ public class OrchestrationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"Administrator", "Warehouse manager", "Warehouse agent", "Delivery driver", "International driver",
             "Logistics agent", "Order confirmation specialist"})
+    @Counted(name = "completeJobCounter", description = "How many times the completeJob method has been invoked.")
+    @SimplyTimed(name = "completeJobTimer", description = "A measure of how long it takes to perform the completeJob method.")
     public Response completeJob(CompleteJobRequest completeJobRequest) {
         try {
             if (orchestrationBean.completeJob(completeJobRequest.getJobId())) {
@@ -548,7 +555,5 @@ public class OrchestrationResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
-
-    // Metrics.
 
 }

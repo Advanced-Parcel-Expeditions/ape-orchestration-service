@@ -89,6 +89,20 @@
             <version>0.11.5</version>
         </dependency>
 
+        <!-- Dependencies for metrics. -->
+
+        <dependency>
+            <groupId>com.kumuluz.ee.config</groupId>
+            <artifactId>kumuluzee-config-mp</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kumuluz.ee.metrics</groupId>
+            <artifactId>kumuluzee-metrics-core</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

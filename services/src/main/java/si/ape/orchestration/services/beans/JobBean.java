@@ -75,17 +75,9 @@ public class JobBean {
             "}";
 
     /** The createJob mutation. */
-    private final String createJobMutation = "mutation CreateJob {\n" +
-            "    createJob(\n" +
-            "        jobRequest: { parcelId: \"<set-parcel-id>\", job: { jobType: { id: <set-job-type-id> }, staff: { id: <set-staff-id> } } }\n" +
-            "    ) {\n" +
-            "        totalCount\n" +
-            "        edges {\n" +
-            "            dateCompleted\n" +
-            "            dateCreated\n" +
-            "            id\n" +
-            "        }\n" +
-            "    }\n" +
+    private final String createJobMutation = "{\n" +
+            "  \"query\": \"mutation CreateJob { createJob( jobRequest: { parcelId: \\\"<set-parcel-id>\\\", job: { jobType: { id: <set-job-type-id> }, staff: { id: <set-employee-id> } } }) { totalCount edges { dateCompleted dateCreated id } } }\",\n" +
+            "  \"variables\": {}\n" +
             "}";
 
     /** The completeJob mutation. */
@@ -264,6 +256,9 @@ public class JobBean {
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(createJobMutation), Response.class);
 
+        System.out.println("Mutation: " + createJobMutation);
+
+        System.out.println("Job creation");
         System.out.println("Response status: " + response.getStatus());
 
         return response.getStatus() == 200;

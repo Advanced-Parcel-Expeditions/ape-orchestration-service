@@ -254,6 +254,7 @@ public class OrchestrationResource {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }

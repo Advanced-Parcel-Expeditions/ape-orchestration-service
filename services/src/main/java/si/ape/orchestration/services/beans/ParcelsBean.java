@@ -4,7 +4,13 @@ import org.eclipse.microprofile.faulttolerance.Retry;
 import si.ape.orchestration.lib.Customer;
 import si.ape.orchestration.lib.Parcel;
 import si.ape.orchestration.lib.ParcelStatus;
+import si.ape.orchestration.lib.Street;
 import si.ape.orchestration.lib.requests.parcels.CreateParcelRequest;
+import si.ape.orchestration.models.converters.CustomerConverter;
+import si.ape.orchestration.models.converters.ParcelStatusConverter;
+import si.ape.orchestration.models.entities.CustomerEntity;
+import si.ape.orchestration.models.entities.ParcelStatusEntity;
+import si.ape.orchestration.models.entities.StreetEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
@@ -16,6 +22,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Random;
 
 /**
  * The ParcelsBean class is a class which takes care of communication with the parcels microservice and provides
@@ -107,12 +114,24 @@ public class ParcelsBean {
      * @param createParcelRequest The request containing the information about the parcel.
      */
     public String createParcel(CreateParcelRequest createParcelRequest) {
-        Customer sender = em.find(Customer.class, createParcelRequest.getSenderId());
-        Customer recipient = em.find(Customer.class, createParcelRequest.getRecipientId());
-        ParcelStatus parcelStatus = em.find(ParcelStatus.class, 1);
+        CustomerEntity senderEntity = em.find(CustomerEntity.class, createParcelRequest.getSenderId());
+        CustomerEntity recipientEntity = em.find(CustomerEntity.class, createParcelRequest.getRecipientId());
+        Customer sender = CustomerConverter.toDto(senderEntity);
+        Customer recipient = CustomerConverter.toDto(recipientEntity);
+        Street senderStreet = sender.getStreet();
+        Street recipientStreet = recipient.getStreet();
+        ParcelStatusEntity parcelStatusEntity = em.find(ParcelStatusEntity.class, 1);
+        ParcelStatus parcelStatus = ParcelStatusConverter.toDto(parcelStatusEntity);
+
+        System.out.println("Parcel status: " + parcelStatus.getId());
+        System.out.println("Parcel status name: " + parcelStatus.getName());
+
         Parcel parcel = new Parcel();
+        parcel.setId(generateParcelId(sender.getStreet().getCity().getCountry().getCode()));
         parcel.setSender(sender);
+        parcel.setSenderStreet(senderStreet);
         parcel.setRecipient(recipient);
+        parcel.setRecipientStreet(recipientStreet);
         parcel.setParcelStatus(parcelStatus);
         parcel.setWeight(createParcelRequest.getWeight());
         parcel.setHeight(createParcelRequest.getHeight());
@@ -124,10 +143,38 @@ public class ParcelsBean {
                 .request()
                 .post(Entity.json(parcel), Response.class);
 
+        System.out.println(response.getStatus());
+
         if (response.getStatus() == 200) {
             // TODO: Deserialize the parcel
+            return parcel.getId();
         }
         return null;
+    }
+
+    private String generateParcelId(String senderCountryCode) {
+        StringBuilder idBuilder = new StringBuilder();
+        Integer identicalIds = 0;
+
+        do {
+            idBuilder = new StringBuilder(senderCountryCode);
+            idBuilder.append(generateRandomAlphanumericString(5));
+        } while (identicalIds > 0);
+
+        return idBuilder.toString();
+    }
+
+    private String generateRandomAlphanumericString(int size) {
+        final int lowerLimit = 48; // Character '0'.
+        final int upperLimit = 122; // Character 'z'.
+
+        return new Random()
+                .ints(lowerLimit, upperLimit)
+                // Leave out non-alphanumeric characters.
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(size)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
 }

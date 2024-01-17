@@ -13,7 +13,10 @@ import java.io.Serializable;
 @NamedQueries(value =
         {
                 @NamedQuery(name = "StreetEntity.getAll",
-                        query = "SELECT s FROM StreetEntity s")
+                        query = "SELECT s FROM StreetEntity s"),
+                @NamedQuery(name = "StreetEntity.getByProperties",
+                        query = "SELECT s FROM StreetEntity s WHERE s.streetName = :streetName AND s.streetNumber = :streetNumber" +
+                                " AND s.city.code = :cityCode AND s.city.name = :cityName AND s.city.country.code = :countryCode")
         })
 @IdClass(StreetEntity.StreetId.class)
 public class StreetEntity {

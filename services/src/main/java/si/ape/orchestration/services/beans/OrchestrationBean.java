@@ -138,6 +138,7 @@ public class OrchestrationBean {
      */
     public boolean createJob(CreateJobRequest createJobRequest) {
         String parcelId = parcelsBean.createParcel(createJobRequest.getParcel());
+        System.out.println("Parcel ID: " + parcelId);
         return jobBean.createJob(createJobRequest, parcelId);
     }
 

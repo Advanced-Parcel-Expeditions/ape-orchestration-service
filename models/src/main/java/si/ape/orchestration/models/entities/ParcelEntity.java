@@ -14,6 +14,8 @@ import javax.persistence.*;
                                 "(:senderId IS NULL OR p.sender.id = :senderId) AND " +
                                 "(:recipientId IS NULL OR p.recipient.id = :recipientId) AND " +
                                 "(:parcelStatusId IS NULL OR p.parcelStatus.id = :parcelStatusId)"),
+                @NamedQuery(name = "ParcelEntity.getNumberOfIdenticalIds",
+                        query = "SELECT COUNT(p) FROM ParcelEntity p WHERE p.id = :id")
         })
 public class ParcelEntity {
     @Id

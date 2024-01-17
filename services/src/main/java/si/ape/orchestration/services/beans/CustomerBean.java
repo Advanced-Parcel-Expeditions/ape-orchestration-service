@@ -12,6 +12,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * The CustomerBean class is a class which takes care of communication with the customer microservice and provides
@@ -19,6 +20,9 @@ import java.util.List;
  */
 @RequestScoped
 public class CustomerBean {
+
+    @Inject
+    private Logger log;
 
     /** The CustomerBean's entity manager. */
     @Inject
@@ -33,6 +37,7 @@ public class CustomerBean {
      */
     @Retry(maxRetries = 3)
     public List<Customer> findCustomersBySearchString(String searchString) {
+        log.info("Searching for customers with search string: " + searchString);
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/customer/v1/customer/" + searchString)
                 .queryParam("searchString", searchString)

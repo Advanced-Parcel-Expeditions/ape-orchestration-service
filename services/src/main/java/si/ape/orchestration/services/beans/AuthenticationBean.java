@@ -76,6 +76,10 @@ public class AuthenticationBean {
      * @throws IllegalStateException If the authentication microservice returns an internal server error.
      */
     public boolean registerEmployee(RegisterEmployeeRequest registerEmployeeRequest) {
+
+        System.out.println(registerEmployeeRequest.getFirstName());
+        System.out.println(registerEmployeeRequest.getLastName());
+
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/authentication/v1/auth/register/employee")
                 .request()

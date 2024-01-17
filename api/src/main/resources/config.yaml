@@ -20,3 +20,5 @@ kumuluzee:
         status-codes: "200, 500"
       - name: prometheus-endpoint
         url-pattern: /prometheus/*
+      - name: orchestration-endpoint
+        url-pattern: /v1/orchestration/*

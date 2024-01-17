@@ -150,7 +150,8 @@ public class JobBean {
             }
             return jobEntities.stream().map(JobConverter::toDto).toList();
         } else {
-            return null;
+            throw new RuntimeException("Internal server error.");
+            //return null;
         }
 
     }

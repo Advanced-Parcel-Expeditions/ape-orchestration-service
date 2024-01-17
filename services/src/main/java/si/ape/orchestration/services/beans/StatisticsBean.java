@@ -73,12 +73,13 @@ public class StatisticsBean {
         JsonWebToken jwt = (JsonWebToken) sc.getUserPrincipal();
 
         Client client = ClientBuilder.newClient();
-        Response response = client.target("http://dev.okeanos.mywire.org/statistics/v1/statistics/branch/" + branchId)
+        Response response = client.target("http://dev.okeanos.mywire.org/statistics/v1/statistics/" + branchId)
                 .request(MediaType.APPLICATION_JSON)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + jwt.getRawToken())
                 .get();
+
+        System.out.println(response.getStatus());
 
         if (response.getStatus() == 200) {
             return response.readEntity(BranchStatisticsResponse.class);

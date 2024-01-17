@@ -81,6 +81,8 @@ public class AuthenticationBean {
                 .request()
                 .post(Entity.json(registerEmployeeRequest), Response.class);
 
+        System.out.println(response.getStatus());
+
         if (response.getStatus() == 200) {
             return true;
         } else if (response.getStatus() == 500) {

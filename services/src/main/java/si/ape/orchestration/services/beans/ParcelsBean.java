@@ -35,12 +35,14 @@ public class ParcelsBean {
     @Retry(maxRetries = 3)
     public List<Parcel> viewParcelsAsSender(Integer customerId) {
         Client client = ClientBuilder.newClient();
-        Response response =  client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
+        Response response =  client.target("http://dev.okeanos.mywire.org/api/parcels/v1/parcels")
                 .queryParam("senderId", customerId)
                 .request(MediaType.APPLICATION_JSON)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .get();
+
+        System.out.println(response.getStatus());
 
         if (response.getStatus() == 200) {
             return response.readEntity(List.class);
@@ -57,12 +59,14 @@ public class ParcelsBean {
     @Retry(maxRetries = 3)
     public List<Parcel> viewParcelsAsRecipient(Integer customerId) {
         Client client = ClientBuilder.newClient();
-        Response response = client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
+        Response response = client.target("http://dev.okeanos.mywire.org/api/parcels/v1/parcels")
                 .queryParam("recipientId", customerId)
                 .request(MediaType.APPLICATION_JSON)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .get();
+
+        System.out.println(response.getStatus());
 
         if (response.getStatus() == 200) {
             return response.readEntity(List.class);
@@ -80,7 +84,7 @@ public class ParcelsBean {
     @Retry(maxRetries = 3)
     public Parcel viewParcel(String parcelId) {
         Client client = ClientBuilder.newClient();
-        Response response =  client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
+        Response response =  client.target("http://dev.okeanos.mywire.org/api/parcels/v1/parcels")
                 .queryParam("id", parcelId)
                 .request()
                 .get();
@@ -116,7 +120,7 @@ public class ParcelsBean {
         parcel.setDepth(createParcelRequest.getDepth());
 
         Client client = ClientBuilder.newClient();
-        Response response = client.target("http://dev.okeanos.mywire.org/parcels/v1/parcels")
+        Response response = client.target("http://dev.okeanos.mywire.org/api/parcels/v1/parcels")
                 .request()
                 .post(Entity.json(parcel), Response.class);
 

@@ -10,6 +10,7 @@ import si.ape.orchestration.lib.requests.authentication.RegisterEmployeeRequest;
 import si.ape.orchestration.lib.requests.job.CancelJobRequest;
 import si.ape.orchestration.lib.requests.job.CompleteJobRequest;
 import si.ape.orchestration.lib.requests.job.CreateJobRequest;
+import si.ape.orchestration.lib.responses.statistics.OrganizationStatisticsResponse;
 import si.ape.orchestration.services.beans.OrchestrationBean;
 
 import javax.annotation.security.DeclareRoles;
@@ -427,6 +428,9 @@ public class OrchestrationResource {
     @RolesAllowed({"Administrator", "Warehouse manager", "Logistics agent"})
     public Response viewStatistics() {
         try {
+            OrganizationStatisticsResponse organizationStatisticsResponse = orchestrationBean.viewStatistics();
+            System.out.println(organizationStatisticsResponse);
+            System.out.println(organizationStatisticsResponse.getNumberOfBranchOffices());
             return Response.ok(orchestrationBean.viewStatistics()).build();
         } catch (Exception e) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -477,8 +481,18 @@ public class OrchestrationResource {
 
         try {
             if (senderId != null) {
+                System.out.println("SEnder is not null");
+                //List<Parcel> parcels = orchestrationBean.viewParcelsAsSender(senderId);
+                /*for (Parcel parcel : parcels) {
+                    System.out.println(parcel);
+                }*/
                 return Response.ok(orchestrationBean.viewParcelsAsSender(senderId)).build();
             } else if (recipientId != null) {
+                System.out.println("Recipient is not null");
+                /*List<Parcel> parcels = orchestrationBean.viewParcelsAsRecipient(recipientId);
+                for (Parcel parcel : parcels) {
+                    System.out.println(parcel);
+                }*/
                 return Response.ok(orchestrationBean.viewParcelsAsRecipient(recipientId)).build();
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).build();

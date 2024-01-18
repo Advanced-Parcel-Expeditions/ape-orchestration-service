@@ -21,9 +21,6 @@ import java.util.logging.Logger;
 @RequestScoped
 public class CustomerBean {
 
-    @Inject
-    private Logger log;
-
     /** The CustomerBean's entity manager. */
     @Inject
     private EntityManager em;
@@ -37,7 +34,6 @@ public class CustomerBean {
      */
     @Retry(maxRetries = 3)
     public List<Customer> findCustomersBySearchString(String searchString) {
-        log.info("Searching for customers with search string: " + searchString);
         Client client = ClientBuilder.newClient();
         Response response = client.target("http://dev.okeanos.mywire.org/customer/v1/customer/" + searchString)
                 .queryParam("searchString", searchString)

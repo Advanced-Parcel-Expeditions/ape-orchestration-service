@@ -199,7 +199,7 @@ public class JobBean {
                 job.setJobStatus(em.find(JobStatusEntity.class, jobStatus.getInt("id")));
                 job.setJobType(em.find(JobTypeEntity.class, jobType.getInt("id")));
                 if (!dateCompleted.equals("null")) {
-                    job.setDateCompleted(Instant.parse(dateCompleted));
+                    job.setDateCompleted(Instant.parse(dateCompleted.strip() + "Z"));
                 }
                 job.setStaff(em.find(EmployeeEntity.class, employeeId));
                 job.setDateCreated(Instant.parse(dateCreated.strip() + "Z"));
